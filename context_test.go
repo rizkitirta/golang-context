@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"runtime"
 	"testing"
+	"time"
 )
 
 func TestContext(t *testing.T) {
@@ -59,11 +60,25 @@ func TestContextWithCancel(t *testing.T) {
 
 	for v := range destination {
 		fmt.Println("counter", v)
-		if v == 5 {
+		if v == 10 {
 			break
 		}
 	}
 
 	cancel() // Mengirim sinyal cancel ke goroutine yang menjalankan counter
+	fmt.Println("total goroutine", runtime.NumGoroutine())
+}
+
+func TestContextWithTimeOut(t *testing.T) {
+	fmt.Println("total goroutine", runtime.NumGoroutine())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second) // cancel akan otomatis diajalankan setelah waktu 5 detik
+	destination := RunCounter(ctx)
+	defer cancel()
+
+	for v := range destination {
+		fmt.Println("counter", v)
+	}
+
 	fmt.Println("total goroutine", runtime.NumGoroutine())
 }
