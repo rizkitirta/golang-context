@@ -72,7 +72,21 @@ func TestContextWithCancel(t *testing.T) {
 func TestContextWithTimeOut(t *testing.T) {
 	fmt.Println("total goroutine", runtime.NumGoroutine())
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5 * time.Second) // cancel akan otomatis diajalankan setelah waktu 5 detik
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second) // cancel akan otomatis diajalankan setelah waktu 5 detik
+	destination := RunCounter(ctx)
+	defer cancel()
+
+	for v := range destination {
+		fmt.Println("counter", v)
+	}
+
+	fmt.Println("total goroutine", runtime.NumGoroutine())
+}
+
+func TestContextWithDeadline(t *testing.T) {
+	fmt.Println("total goroutine", runtime.NumGoroutine())
+
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second)) // cancel akan otomatis diajalankan sesuai waktu deadline yang ditentukan
 	destination := RunCounter(ctx)
 	defer cancel()
 
